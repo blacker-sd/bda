@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataCloud - Login</title>
+    <!-- 引入 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- 引入导航栏样式 -->
+    <link rel="stylesheet" href="../styles/navbar.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin-left: 0;
+            transition: 0.3s;
+        }
+
+        .main-content.active {
+            margin-left: 250px;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .login-btn {
+            background-color: #1a73e8;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .login-btn:hover {
+            background-color: #1557b0;
+        }
+
+        .register-prompt {
+            text-align: center;
+            margin-top: 1rem;
+            color: #666;
+        }
+
+        .register-link {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+        .title {
+            text-align: center;
+            color: #1a73e8;
+            margin: 0;
+        }
+
+        /* 添加底部链接样式 */
+        .footer-links {
+            position: static;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .footer-links a {
+            color: #333;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .footer-links span {
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 0 20px;
+        }
+
+        .footer-links a:hover {
+            color: #1a73e8;
+            text-decoration: underline;
+        }
+
+        /* 添加标题容器样式 */
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .title-container img {
+            width: 48px;  /* 原来的 24px 放大一倍 */
+            height: 48px; /* 原来的 24px 放大一倍 */
+            margin-left: 10px;
+            object-fit: contain;
+        }
+
+        /* 修改表单切换动画 */
+        .form-group {
+            transition: all 0.3s ease;
+        }
+
+        .email-field {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        .email-field.show {
+            opacity: 1;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏容器 -->
+    <div id="navbar-container"></div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <div class="login-container">
+            <div class="title-container">
+                <h1 class="title">DataCloud</h1>
+                <img src="../images/avocado.png" alt="DataCloud Logo">
+            </div>
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <!-- 添加邮箱字段，默认隐藏 -->
+                <div class="form-group email-field" style="display: none;">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+            <div class="register-prompt">
+                New to DataCloud?
+                <a href="#" class="register-link" onclick="toggleForm(true)">Sign Up</a>
+            </div>
+        </div>
+        
+        <!-- 底部链接直接放在登录框下方 -->
+        <div class="footer-links">
+            <a href="/about">About Us</a>
+            <span>|</span>
+            <a href="/policy">Policy</a>
+        </div>
+    </div>
+
+    <!-- 将 navbar.js 的内容直接放在这里 -->
+    <script>
+        // 定义导航栏的 HTML 内容
+        const navbarContent = `
+            <!-- 遮罩层 -->
+            <div class="overlay" onclick="toggleSidebar()"></div>
+
+            <!-- 汉堡菜单按钮 -->
+            <div class="hamburger" onclick="toggleSidebar()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+
+            <!-- 侧边导航栏 -->
+            <div class="sidebar">
+                <span class="close-btn" onclick="toggleSidebar()">&times;</span>
+                <ul class="nav-links">
+                    <li><a href="#"><i class="fas fa-database"></i> My Data</a></li>
+                    <li><a href="#"><i class="fas fa-tools"></i> Processing Tools</a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i> Discussion</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
+                </ul>
+            </div>
+        `;
+
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('active');
+        }
+
+        // 添加 ESC 键关闭功能
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && document.querySelector('.sidebar').classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+
+        // 页面加载完成后插入导航栏
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded event fired');
+            const container = document.getElementById('navbar-container');
+            if (container) {
+                console.log('Container found');
+                container.innerHTML = navbarContent;
+                console.log('Navbar content inserted');
+            } else {
+                console.error('Container not found');
+            }
+        });
+
+        function toggleForm(isSignup) {
+            const title = document.querySelector('.title');
+            const submitBtn = document.querySelector('.login-btn');
+            const switchText = document.querySelector('.register-prompt');
+            const emailField = document.querySelector('.email-field');
+            const form = document.querySelector('form');
+
+            if (isSignup) {
+                // 切换到注册表单
+                title.textContent = 'Create Account';
+                submitBtn.textContent = 'Sign Up';
+                switchText.innerHTML = 'Already have an account? <a href="#" class="register-link" onclick="toggleForm(false)">Sign In</a>';
+                emailField.style.display = 'block';  // 显示邮箱输入框
+                form.action = '/register';
+                
+                // 添加动画效果
+                setTimeout(() => {
+                    emailField.classList.add('show');
+                }, 10);
+            } else {
+                // 切换到登录表单
+                title.textContent = 'DataCloud';
+                submitBtn.textContent = 'Sign In';
+                switchText.innerHTML = 'New to DataCloud? <a href="#" class="register-link" onclick="toggleForm(true)">Sign Up</a>';
+                emailField.classList.remove('show');
+                
+                // 添加动画效果
+                setTimeout(() => {
+                    emailField.style.display = 'none';
+                }, 300);
+                form.action = '/login';
+            }
+        }
+    </script>
+</body>
+</html>

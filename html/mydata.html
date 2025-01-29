@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataCloud - My Data</title>
+    <!-- 引入 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- 引入导航栏样式 -->
+    <link rel="stylesheet" href="../styles/navbar.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        /* 顶部栏样式 */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-left: 0;
+            transition: 0.3s;
+        }
+
+        .top-bar.active {
+            margin-left: 250px;
+        }
+
+        /* 用户信息区样式 */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .user-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* 主要内容区样式 */
+        .main-content {
+            display: flex;
+            margin-left: 0;
+            transition: 0.3s;
+            padding: 20px;
+        }
+
+        .main-content.active {
+            margin-left: 250px;
+        }
+
+        /* 左侧分类栏样式 */
+        .category-sidebar {
+            width: 200px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-right: 20px;
+        }
+
+        .category-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #f0f2f5;
+            color: #333;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.3s;
+        }
+
+        .category-btn:hover {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .category-btn.active {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        /* 文件列表区样式 */
+        .file-list {
+            flex-grow: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .file-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #eee;
+            color: #666;
+        }
+
+        .file-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .download-btn {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .star-btn {
+            background-color: #f0f2f5;
+            color: #666;
+        }
+
+        .star-btn.active {
+            background-color: #ffd700;
+            color: #333;
+        }
+
+        /* 添加搜索框样式 */
+        .search-container {
+            flex: 0 1 600px;
+            margin: 0 20px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            padding: 8px 16px;
+        }
+
+        .search-icon {
+            color: #666;
+            margin-right: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 14px;
+            padding: 8px 0;
+        }
+
+        /* 添加公开按钮样式 */
+        .public-btn {
+            background-color: #f0f2f5;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .public-btn.active {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .public-btn:hover {
+            background-color: #e3e3e3;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏容器 -->
+    <div id="navbar-container"></div>
+
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <div class="left-section">
+            <div class="hamburger" onclick="toggleSidebar()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="search files...">
+            </div>
+        </div>
+        <div class="user-info">
+            <img src="../images/avatar-placeholder.png" alt="User Avatar" class="user-avatar">
+            <div class="user-details">
+                <span class="user-name">John Doe</span>
+                <span class="user-meta">ID: 12345 | Male</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容区 -->
+    <div class="main-content">
+        <!-- 左侧分类栏 -->
+        <div class="category-sidebar">
+            <button class="category-btn active">
+                <i class="fas fa-sync-alt"></i> transmission
+            </button>
+            <button class="category-btn">
+                <i class="fas fa-upload"></i> upload
+            </button>
+            <button class="category-btn">
+                <i class="fas fa-star"></i> saved
+            </button>
+        </div>
+
+        <!-- 文件列表区 -->
+        <div class="file-list">
+            <table class="file-table">
+                <thead>
+                    <tr>
+                        <th>FILEMANE</th>
+                        <th>SIZE</th>
+                        <th>FILE CODE</th>
+                        <th>STAR</th>
+                        <th>PUBLIC</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>example.pdf</td>
+                        <td>2.5 MB</td>
+                        <td>PDF-001</td>
+                        <td>
+                            <button class="action-btn star-btn" title="Star">
+                                <i class="fas fa-star"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="action-btn public-btn" title="Make Public">
+                                <i class="fas fa-lock"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="action-btn download-btn" title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="action-btn delete-btn" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 复用之前的导航栏脚本 -->
+    <script>
+        // 定义导航栏的 HTML 内容
+        const navbarContent = `
+            <!-- 遮罩层 -->
+            <div class="overlay" onclick="toggleSidebar()"></div>
+
+            <!-- 汉堡菜单按钮 -->
+            <div class="hamburger" onclick="toggleSidebar()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+
+            <!-- 侧边导航栏 -->
+            <div class="sidebar">
+                <span class="close-btn" onclick="toggleSidebar()">&times;</span>
+                <ul class="nav-links">
+                    <li><a href="#"><i class="fas fa-database"></i> My Data</a></li>
+                    <li><a href="#"><i class="fas fa-tools"></i> Processing Tools</a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i> Discussion</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
+                </ul>
+            </div>
+        `;
+
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active');
+            document.querySelector('.top-bar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('active');
+        }
+
+        // 添加 ESC 键关闭功能
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && document.querySelector('.sidebar').classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+
+        // 页面加载完成后插入导航栏
+        window.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('navbar-container');
+            if (container) {
+                container.innerHTML = navbarContent;
+            }
+
+            // 添加收藏按钮切换功能
+            document.querySelectorAll('.star-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+
+            // 添加分类按钮切换功能
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 添加公开按钮切换功能
+            document.querySelectorAll('.public-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const isPublic = this.classList.contains('active');
+                    this.querySelector('i').className = isPublic ? 'fas fa-lock-open' : 'fas fa-lock';
+                    this.title = isPublic ? 'Make Private' : 'Make Public';
+                });
+            });
+        });
+
+        // 添加新的文件行的函数
+        function addFileRow(fileName, fileSize, fileCode, isStarred, isPublic) {
+            const tbody = document.querySelector('.file-table tbody');
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td>${fileName}</td>
+                <td>${fileSize}</td>
+                <td>${fileCode}</td>
+                <td>
+                    <button class="action-btn star-btn" title="Star">
+                        <i class="fas fa-star"></i>
+                    </button>
+                </td>
+                <td>
+                    <button class="action-btn public-btn" title="${isPublic ? 'Make Private' : 'Make Public'}">
+                        <i class="fas fa-${isPublic ? 'lock-open' : 'lock'}"></i>
+                    </button>
+                </td>
+                <td>
+                    <button class="action-btn download-btn" title="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="action-btn delete-btn" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            // 设置初始状态
+            if (isStarred) {
+                newRow.querySelector('.star-btn').classList.add('active');
+            }
+            if (isPublic) {
+                newRow.querySelector('.public-btn').classList.add('active');
+            }
+
+            // 添加事件监听器
+            addRowEventListeners(newRow);
+            
+            // 将新行添加到表格中
+            tbody.appendChild(newRow);
+        }
+
+        // 为新行添加事件监听器
+        function addRowEventListeners(row) {
+            // 收藏按钮功能
+            const starBtn = row.querySelector('.star-btn');
+            starBtn.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+
+            // 公开按钮功能
+            const publicBtn = row.querySelector('.public-btn');
+            publicBtn.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const isPublic = this.classList.contains('active');
+                this.querySelector('i').className = isPublic ? 'fas fa-lock-open' : 'fas fa-lock';
+                this.title = isPublic ? 'Make Private' : 'Make Public';
+            });
+
+            // 删除按钮功能
+            const deleteBtn = row.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', function() {
+                row.remove();
+            });
+        }
+
+        // 页面加载完成后添加上传按钮的事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadBtn = document.querySelector('.category-btn:nth-child(2)'); // 选择Upload按钮
+            
+            uploadBtn.addEventListener('click', function() {
+                // 这里可以添加文件选择对话框
+                // 为演示，这里使用示例数据
+                addFileRow(
+                    'new_document.pdf',
+                    '1.2 MB',
+                    'PDF-002',
+                    false,  // 默认未收藏
+                    false   // 默认不公开
+                );
+            });
+        });
+
+        // 示例调用
+        addFileRow('test.pdf', '3.0 MB', 'PDF-003', true, false);
+    </script>
+</body>
+</html> 
